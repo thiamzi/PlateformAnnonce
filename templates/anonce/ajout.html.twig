@@ -1,0 +1,20 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  {% trans %}Ajouter une annonce{% endtrans %} - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+
+  <h2>{% trans %}Ajouter une annonce{% endtrans %}</h2>
+
+  {{ include("anonce/formulaire.html.twig") }}
+
+  <p>
+    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      {% trans %}Retour à l'accueil{% endtrans %}
+    </a>
+  </p>
+
+  {% endblock %}

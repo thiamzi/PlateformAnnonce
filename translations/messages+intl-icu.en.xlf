@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="HOL_P_h" resname="Ajouter une annonce">
+        <source>Ajouter une annonce</source>
+        <target>Add advert</target>
+      </trans-unit>
+      <trans-unit id="j5_bCOw" resname="Retour à l'accueil">
+        <source>Retour à l'accueil</source>
+        <target>Back to home</target>
+      </trans-unit>
+      <trans-unit id=".qLUHdF" resname="Poser votre candidature">
+        <source>Poser votre candidature</source>
+        <target>Apply</target>
+      </trans-unit>
+      <trans-unit id="UzFhc1Y" resname="Accueil">
+        <source>Accueil</source>
+        <target>Home</target>
+      </trans-unit>
+      <trans-unit id="1azEktz" resname="Voir detail">
+        <source>Voir detail</source>
+        <target>See details</target>
+      </trans-unit>
+      <trans-unit id="_098ikZ" resname="Pas (encore !) d'annonces">
+        <source>Pas (encore !) d'annonces</source>
+        <target>No (adverts !) yet</target>
+      </trans-unit>
+      <trans-unit id="xxfxHSx" resname="Cette annonce est parue dans les catégories suivantes">
+        <source>Cette annonce est parue dans les catégories suivantes</source>
+        <target>__Cette annonce est parue dans les catégories suivantes</target>
+      </trans-unit>
+      <trans-unit id="QLeNDdM" resname="Retour à la liste">
+        <source>Retour à la liste</source>
+        <target>BAck to list</target>
+      </trans-unit>
+      <trans-unit id="IqB4w6u" resname="Poser candidature">
+        <source>Poser candidature</source>
+        <target>Apply</target>
+      </trans-unit>
+      <trans-unit id="I8eGSwQ" resname="Modifier l'annonce">
+        <source>Modifier l'annonce</source>
+        <target>Update advert</target>
+      </trans-unit>
+      <trans-unit id="RhFmx2M" resname="Supprimer l'annonce">
+        <source>Supprimer l'annonce</source>
+        <target>Delete adevrt</target>
+      </trans-unit>
+      <trans-unit id="D4Z39hB" resname="Etes-vous certain de vouloir supprimer l'annonce">
+        <source>Etes-vous certain de vouloir supprimer l'annonce</source>
+        <target>__Etes-vous certain de vouloir supprimer l'annonce</target>
+      </trans-unit>
+      <trans-unit id="zhrXJQ3" resname="Retour à l'annonce">
+        <source>Retour à l'annonce</source>
+        <target>Back to advert</target>
+      </trans-unit>
+      <trans-unit id="Kp6xzJY" resname="Ma plateforme d'annonces">
+        <source>Ma plateforme d'annonces</source>
+        <target>__Ma plateforme d'annonces</target>
+      </trans-unit>
+      <trans-unit id="OMm_GEi" resname="Ce projet est propulsé par Symfony,&#10;        et construit grâce au MOOC OpenClassrooms et SensioLabs.">
+        <source>Ce projet est propulsé par Symfony,
+        et construit grâce au MOOC OpenClassrooms et SensioLabs.</source>
+        <target>__Ce projet est propulsé par Symfony,
+        et construit grâce au MOOC OpenClassrooms et SensioLabs.</target>
+      </trans-unit>
+      <trans-unit id="jMMk.Am" resname="Participer au MOOC »">
+        <source>Participer au MOOC »</source>
+        <target>__Participer au MOOC »</target>
+      </trans-unit>
+      <trans-unit id="YSHyAf3" resname="Bienvenue">
+        <source>Bienvenue</source>
+        <target>__Bienvenue</target>
+      </trans-unit>
+      <trans-unit id="CsPSyzA" resname="Se connecter">
+        <source>Se connecter</source>
+        <target>__Se connecter</target>
+      </trans-unit>
+      <trans-unit id="xzFuW9v" resname="Mon profile">
+        <source>Mon profile</source>
+        <target>__Mon profile</target>
+      </trans-unit>
+      <trans-unit id="_lIFo7J" resname="Mes annonces">
+        <source>Mes annonces</source>
+        <target>__Mes annonces</target>
+      </trans-unit>
+      <trans-unit id="Dvf5y03" resname="Se deconnecter">
+        <source>Se deconnecter</source>
+        <target>__Se deconnecter</target>
+      </trans-unit>
+      <trans-unit id="TTi18D1" resname="Dernières annonces">
+        <source>Dernières annonces</source>
+        <target>__Dernières annonces</target>
+      </trans-unit>
+      <trans-unit id="4xKtgn9" resname="Email du candidat">
+        <source>Email du candidat</source>
+        <target>__Email du candidat</target>
+      </trans-unit>
+      <trans-unit id="em3lZw6" resname="Contenu">
+        <source>Contenu</source>
+        <target>__Contenu</target>
+      </trans-unit>
+      <trans-unit id="eOYiezy" resname="Annonces">
+        <source>Annonces</source>
+        <target>__Annonces</target>
+      </trans-unit>
+      <trans-unit id="Z9y1PV2" resname="Anonces">
+        <source>Anonces</source>
+        <target>__Anonces</target>
+      </trans-unit>
+      <trans-unit id="SP7oN_a" resname="Dev mobile">
+        <source>Dev mobile</source>
+        <target>__Dev mobile</target>
+      </trans-unit>
+      <trans-unit id="Kf68NK6" resname="Dev web">
+        <source>Dev web</source>
+        <target>__Dev web</target>
+      </trans-unit>
+      <trans-unit id="p5VxGj1" resname="Graphisme">
+        <source>Graphisme</source>
+        <target>__Graphisme</target>
+      </trans-unit>
+      <trans-unit id="VPnSN6j" resname="Reseau">
+        <source>Reseau</source>
+        <target>__Reseau</target>
+      </trans-unit>
+      <trans-unit id="TPQLGCn" resname="recherche">
+        <source>recherche</source>
+        <target>__recherche</target>
+      </trans-unit>
+      <trans-unit id="ssEkU20" resname="Nom">
+        <source>Nom</source>
+        <target>__Nom</target>
+      </trans-unit>
+      <trans-unit id="dNQDzVl" resname="Adresse Email">
+        <source>Adresse Email</source>
+        <target>__Adresse Email</target>
+      </trans-unit>
+      <trans-unit id="it0qtpI" resname="Modifier profile">
+        <source>Modifier profile</source>
+        <target>__Modifier profile</target>
+      </trans-unit>
+      <trans-unit id="z2uNrh0" resname="Mes anonces">
+        <source>Mes anonces</source>
+        <target>__Mes anonces</target>
+      </trans-unit>
+      <trans-unit id="RhSOJQ5" resname="Erreur">
+        <source>Erreur</source>
+        <target>__Erreur</target>
+      </trans-unit>
+      <trans-unit id="sB0RYun" resname="Adresse mail">
+        <source>Adresse mail</source>
+        <target>__Adresse mail</target>
+      </trans-unit>
+      <trans-unit id=".5yLjAZ" resname="Mot de passe">
+        <source>Mot de passe</source>
+        <target>__Mot de passe</target>
+      </trans-unit>
+      <trans-unit id="hdtax3B" resname="Mot de passe oublie">
+        <source>Mot de passe oublie</source>
+        <target>__Mot de passe oublie</target>
+      </trans-unit>
+      <trans-unit id="e6._Wbg" resname="Creer un compte">
+        <source>Creer un compte</source>
+        <target>__Creer un compte</target>
+      </trans-unit>
+      <trans-unit id="NI78_Pu" resname="Lecture d'une annonce">
+        <source>Lecture d'une annonce</source>
+        <target>__Lecture d'une annonce</target>
+      </trans-unit>
+      <trans-unit id="CLDe_0q" resname="Supprimer une annonce">
+        <source>Supprimer une annonce</source>
+        <target>__Supprimer une annonce</target>
+      </trans-unit>
+      <trans-unit id="S.DKsLf" resname="email ou mot de passe incorrect">
+        <source>email ou mot de passe incorrect</source>
+        <target>__email ou mot de passe incorrect</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

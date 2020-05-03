@@ -1,0 +1,63 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block titre %}
+  Lecture d'une annonce - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+{% for message in app.flashes('info') %}
+    <div style="text-align : center; margin-bottom  : 10px;font-size : 20px;
+     background : green ; color : white  ; border-radius : 7px 7px 7px 7px ; " class="flash-success">
+       {{ message }}
+    </div>
+{% endfor %}
+  <div class="list-group-item-heading">
+  {% if anonce.image is not null %}
+    <div style="display: inline-block"><img height="100px" width="200px" src="{{ asset('uploads/images/' ~ anonce.image) }}"/></div>
+  {% endif %}
+    <div style="display: inline-block;margin-left: 5%;">
+      <h3 style="margin-top: 0px;">{{anonce.titre }}
+      <h5>Ecrit par {{anonce.auteur}}  le {{ anonce.date|date('d/m/Y') }}</h5>
+      </h3>
+    </div>
+
+  <div class="well">
+    {{ anonce.contenu }}
+    {% for competance in anonce.categories %}
+    {% endfor %}
+  </div>
+
+{% if not categories.empty %}
+  <p>
+    {% trans %}Cette annonce est parue dans les catégories suivantes{% endtrans %} :
+    {% for categorie in anonce.categories %}
+      {{ categorie.nom | trans}}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+{% endif %}
+
+  <p>
+    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      {% trans %}Retour à la liste{% endtrans %}
+    </a>
+    {% if not verif %}
+    <a href="{{ path('anonce_candidature', {'id': anonce.id}) }}" class="btn btn-default">
+      {% trans %}Poser candidature{% endtrans %}
+    </a>
+    {% endif %}
+
+    {% if verif %}
+    <a href="{{ path('anonce_modifier', {'id': anonce.id}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-edit"></i>
+      {% trans %}Modifier l'annonce{% endtrans %}
+    </a>
+
+    <a href="{{ path('anonce_supprimer', {'id': anonce.id}) }}" class="btn btn-danger">
+      <i class="glyphicon glyphicon-trash"></i>
+      {% trans %}Supprimer l'annonce{% endtrans %}
+    </a>
+   {% endif %}
+  </p>
+
+{% endblock %}

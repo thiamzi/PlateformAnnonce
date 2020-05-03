@@ -1,3 +1,88 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+index:
+    path:       /
+    controller: App\Controller\LayoutController::index
+
+accueil:
+    path:       /{_locale}/accueil/{page}
+    controller: App\Controller\AnonceController::ListeAnonces
+    requirements : 
+        page : \d+
+        _locale: en|fr # les locales disponibles, séparées par des pipes « | »
+        
+
+anonce_detail:
+    path:       /{_locale}/accueil/annonce/detail/{id}
+    controller: App\Controller\AnonceController::vue
+    requirements : 
+        id : \d+
+        _locale: en|fr 
+        #_locale : en|fr
+    #format : html|xml
+    #defaults :
+        #format : html
+
+anonce_ajout:
+    path:       /{_locale}/accueil/anonce/ajout
+    controller: App\Controller\AnonceController::ajout
+    requirements : 
+        id : \d+
+        _locale: en|fr 
+
+anonce_mesAnonces : 
+    path:       /{_locale}/accueil/profile/mesAnonces/{page}
+    controller: App\Controller\UserController::mesAnonces
+    requirements : 
+        page : \d+
+        _locale: en|fr 
+
+anonce_modifier:
+    path:       /{_locale}/accueil/anonce/modifier/{id}
+    controller: App\Controller\AnonceController::modifier
+    requirements : 
+        id : \d+
+        _locale: en|fr 
+
+anonce_supprimer:
+    path:       /{_locale}/accueil/anonce/supprimer/{id}
+    controller: App\Controller\AnonceController::supprimer
+    requirements : 
+        id : \d+
+        _locale: en|fr 
+
+
+anonce_candidature:
+    path:       /{_locale}/accueil/anonce/candidature/{id}
+    controller: App\Controller\AnonceController::candidature
+    requirements : 
+        id : \d+
+        _locale: en|fr 
+
+loginn:
+    path: /{_locale}/accueil/loginn
+    controller: App\Controller\UserController::loginAction
+    requirements : 
+        _locale: en|fr
+
+login_check:
+    path: /login_check
+
+logout:
+    path: /logout
+
+register : 
+    path : /{_locale}/accueil/register
+    controller: App\Controller\UserController::registerAction
+    requirements : 
+        _locale: en|fr
+
+mon_profile : 
+    path:       /{_locale}/accueil/profile
+    controller: App\Controller\UserController::Monprofile
+    requirements : 
+        _locale: en|fr
+
+modifier_profile :
+    path:       /{_locale}/accueil/profile/modifier
+    controller: App\Controller\UserController::ModiferProfile
+    requirements : 
+        _locale: en|fr 

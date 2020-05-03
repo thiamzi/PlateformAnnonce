@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-
+    mes_images: '%kernel.project_dir%/public/uploads/images'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -25,3 +25,31 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Service.antispam:
+        class: app\Service\SpamService
+        arguments:
+            - "@mailer"
+            - 50
+        calls:
+            - [ setLocale, ['%locale%'] ]
+    
+    Service.validator.mon_validator:                              # Le nom du service
+        class: App\Service\Validator\MonValidator     # La classe du service, ici notre validateur déjà créé
+        arguments: ["@request_stack", "@doctrine.orm.entity_manager"] # Les données qu'on injecte au service : la requête et l'EntityManager
+        tags:
+            - { name: validator.constraint_validator, alias: mon_validator }  # C'est avec l'alias qu'on retrouvera le service
+
+
+    App\Service\ImgUploader : 
+        arguments:
+            $targetDirectory: '%mes_images%'
+
+    Service.Beta.Beta_listener : 
+        class : App\Service\Beta\BetaListener
+        arguments :  
+            - '@App\Service\Beta\BetaHTMLAdder'
+            - '2020-06-12'
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: processBeta }
+            #- { name: kernel.event_listener, event: kernel.controller, method: ignoreBeta }

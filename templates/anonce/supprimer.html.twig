@@ -1,0 +1,29 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/delete.html.twig #}
+
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  {% trans %}Supprimer une annonce{% endtrans %} - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+
+  <h2>{% trans %}Supprimer une annonce{% endtrans %}</h2>
+
+  <p>
+    {% trans %}Etes-vous certain de vouloir supprimer l'annonce {% endtrans %}"{{ anonce.titre}}" ?
+  </p>
+
+  {# On met l'id de l'annonce dans la route de l'action du formulaire #}
+  <form action="{{ path('anonce_supprimer', {'id': anonce.id}) }}" method="post">
+    <a href="{{ path('anonce_detail', {'id': anonce.id}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      {% trans %}Retour à l'annonce{% endtrans %}
+    </a>
+    {# Ici j'ai écrit le bouton de soumission à la main #}
+    <input type="submit" value="Supprimer" class="btn btn-danger" />
+    {# Ceci va générer le champ CSRF #}
+    {{ form_rest(form) }}
+  </form>
+
+{% endblock %}

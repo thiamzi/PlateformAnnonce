@@ -1,0 +1,13 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block titre %}
+  {% trans %}Lecture d'une annonce{% endtrans %} - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+  <div style="margin-left:35%;"> 
+    <h1>{% trans %}Erreur{% endtrans %} 404</h1>
+
+    <h3>{{ notFound }}</h3>
+  </div>
+{% endblock %}

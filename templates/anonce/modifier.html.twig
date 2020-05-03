@@ -1,0 +1,25 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  {% trans %}Modifier une annonce{% endtrans %} - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+
+<h1>{% endtrans %}Modifier anonce{% endtrans %}</h1>
+
+  {{ include("anonce/formulaire.html.twig") }}
+
+  <p>
+    {% trans %}Vous éditez une annonce déjà existante, merci de ne pas changer
+    l'esprit général de l'annonce déjà publiée.{% endtrans %}
+  </p>
+
+  <p>
+    <a href="{{ path('anonce_detail', {'id': anonce.id}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+     {% trans %} Retour à l'annonce{% endtrans %}
+    </a>
+  </p>
+
+{% endblock %}

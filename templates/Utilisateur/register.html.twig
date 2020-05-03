@@ -1,0 +1,22 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  Creation compte - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+
+  <h2>{% trans %}Creer un compte{% endtrans %}</h2>
+
+  <div class="well">
+    {{ form(form) }}
+  </div>
+
+  <p>
+    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      {% trans %}Retour à l'accueil{% endtrans %}
+    </a>
+  </p>
+
+  {% endblock %}

@@ -1,0 +1,19 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  {% trans %}Poser votre candidature{% endtrans %} - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+  <h1>{% trans %}Poser votre candidature{% endtrans %}</h1>
+
+  {{ include("anonce/formulaire.html.twig") }}
+
+  <p>
+    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      {% trans %}Retour à l'accueil{% endtrans %}
+    </a>
+  </p>
+
+  {% endblock %}

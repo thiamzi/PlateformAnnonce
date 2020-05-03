@@ -1,0 +1,37 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+  Mes anones - {{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+   <div class="list-group">
+    <h2>{% trans %}Mes anonces{% endtrans %}</h2>
+    {% for anonce in anonces %}
+      <div class="list-group-item" style="border-bottom : 7px solid gray">
+        <div class="list-group-item-heading" >
+        {% if anonce.image is not null %}
+          <div style="display: inline-block"><img height="100px" width="100" src="{{ asset('uploads/images/' ~ anonce.image) }}""></div>
+        {% endif %}
+          <div style="display: inline-block;margin-left: 5%;">
+              <h3 style="margin-top: 0px;">{{anonce.titre }}
+               <h5>Ecrit par {{anonce.auteur}}  le {{ anonce.date|date('d/m/Y') }}</h5>
+              </h3>
+          </div>
+          <a class="btn btn-default pull-right" href="{{ path('anonce_detail', {'id': anonce.id}) }}">Voir detail</a>
+      </div>
+    </div>
+    {% else %}
+      <p>Vous n'avez pas (encore !) d'annonces</p>
+    {% endfor %}
+    </div>
+  <ul class="pagination">
+    {# On utilise la fonction range(a, b) qui crée un tableau de valeurs entre a et b #}
+    {% for p in range(1, nbPages) %}
+      <li{% if p == page %} class="active"{% endif %}>
+         <a href="{{ path('accueil', {'page': p}) }}">{{ p }}</a>
+      </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

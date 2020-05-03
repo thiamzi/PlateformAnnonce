@@ -1,0 +1,11 @@
+<ul class="nav nav-pills nav-stacked">
+  {% for anonce in listeAnonces %}
+    <li>
+      <a href="{{ path('anonce_detail', {'id': anonce.id}) }}">
+        {{ anonce.titre }}
+      </a>
+    </li>
+  {% else %}
+    <li>{% trans %}Pas (encore !) d'annonces{% endtrans %}</li>
+  {% endfor %}
+</ul>
