@@ -21,9 +21,11 @@ class AnonceRepository extends ServiceEntityRepository
         parent::__construct($registry, Anonce::class);
     }
 
-    public function findmyAnonce($page , $nbParPage)
+    public function findMyAnonce($page , $nbParPage)
     {
       $query = $this->createQueryBuilder('a')
+        ->andWhere('a.publie = :publie')
+        ->setParameter('publie', true)
         // Jointure sur l'attribut categories
         ->leftJoin('a.categories', 'c')
         ->addSelect('c')
@@ -71,7 +73,7 @@ class AnonceRepository extends ServiceEntityRepository
       $qb
         ->where('a.updatedAt <= :date')                      // Date de modification antérieure à :date
         ->orWhere('a.updatedAt IS NULL AND a.date <= :date') // Si la date de modification est vide, on vérifie la date de création
-        ->andWhere('a.candidatures IS EMPTY')                // On vérifie que l'annonce ne contient aucune candidature
+        ->andWhere('a.candidature IS EMPTY')                // On vérifie que l'annonce ne contient aucune candidature
         ->setParameter('date', $date)
       ;
 
@@ -80,6 +82,43 @@ class AnonceRepository extends ServiceEntityRepository
       ->getResult()
       ;
     }
+
+    public function CategorieAnonces($page , $nbParPage , $categories)
+    {
+        $query = $this->createQueryBuilder('a')
+          ->andWhere('a.categories = :categories')
+          ->setParameter('categories', $categories)
+          // Jointure sur l'attribut categories
+          ->orderBy('a.date', 'DESC')
+          ->getQuery()
+        ;
+  
+        $query
+        // On définit l'annonce à partir de laquelle commencer la liste
+        ->setFirstResult(($page-1) * $nbParPage)
+        // Ainsi que le nombre d'annonce à afficher sur une page
+        ->setMaxResults($nbParPage);
+  
+      // Enfin, on retourne l'objet Paginator correspondant à la requête construite
+      // (n'oubliez pas le use correspondant en début de fichier)
+      return new Paginator($query, true);
+      }
+
+      public function search($page , $nbParPage , $term){
+
+        $query = $this
+          ->createQueryBuilder('a')
+          ->where('a.titre LIKE :titre')
+          ->setParameter('titre', '%'.$term.'%')
+          ->orderBy('a.titre', 'asc')
+        ;
+        $query
+        ->setFirstResult(($page-1) * $nbParPage)
+        ->setMaxResults($nbParPage);
+  
+      return new Paginator($query, true);
+    }
+
 
     public function isFlood($id , $seconde){
       

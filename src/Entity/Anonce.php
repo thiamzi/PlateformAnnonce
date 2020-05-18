@@ -7,15 +7,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * Anonce
  *
- * @ORM\Table(name="Anonce")
+ * @ORM\Table(name="Anonce", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_1C01D8A989D9B62", columns={"slug"})}, indexes={@ORM\Index(name="IDX_1C01D8AA76ED395", columns={"user_id"})})
+ * @ORM\Entity
  * @ORM\Entity(repositoryClass="App\Repository\AnonceRepository")
- * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields="titre" , message="Une annonce existe déjà avec ce titre.")
  */
 class Anonce
@@ -40,7 +40,8 @@ class Anonce
      * @var string
      *
      * @ORM\Column(name="titre", type="string", length=255, nullable=false)
-     * @Assert\Length(min=10 , minMessage="Le titre doit faire au moins 10 caractères.")
+     * @Assert\NotBlank()
+     * @Assert\Length(min=4 , minMessage="The title should be at least 4 characters")
      */
     private $titre;
 
@@ -49,7 +50,7 @@ class Anonce
      *
      * @ORM\Column(name="auteur", type="string", length=255, nullable=false)
      * @Assert\NotBlank()
-     * @Assert\Length(min=2 , minMessage="Le nom de L'auteur doit faire au moins 2 caractères.")
+     * @Assert\Length(min=2 , minMessage="The name should be at least 2 characters")
      */
     private $auteur;
 
@@ -58,6 +59,7 @@ class Anonce
      *
      * @ORM\Column(name="contenu", type="text", length=0, nullable=false)
      * @Assert\NotBlank()
+     * @Assert\Length(min=4 , minMessage="The contain should be at least 4 characters")
      */
     private $contenu;
 
@@ -69,73 +71,100 @@ class Anonce
     private $publie;
 
     /**
-      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-    */
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
     private $updatedAt;
 
-    /** 
+    /**
+     * @var string
+     * 
      * @Gedmo\Slug(fields={"titre"})
-     * @ORM\Column(name="slug", type="string", length=255, unique=true)
-    */
+     * @ORM\Column(name="slug", type="string", length=255, nullable=false)
+     */
     private $slug;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="image", type="string", nullable=false)
+     * @ORM\Column(name="image", type="string", length=255, nullable=true)
+     * 
      */
     private $image;
 
     /**
-    * @ORM\ManyToMany(targetEntity="App\Entity\Categorie", cascade={"persist"})
-    *
-    * @ORM\JoinTable(name="appartient")
+    * @ORM\OneToMany(targetEntity="App\Entity\Candidature", mappedBy="anonce" )
     */
-     private $categories;
+    private $candidature;
 
     /**
-    * @ORM\OneToMany(targetEntity="App\Entity\Candidature", mappedBy="anonce")
-    */
-    private $candidatures;
-
-    /**
-     * @ORM\Column(name="nb_applications", type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="nb_applications", type="integer", nullable=false)
      */
-     private $nbCandidatures = 0;
+    private $nbApplications = 0;
 
     /**
-    * @ORM\ManyToOne(targetEntity="App\Entity\User")
-    * @ORM\JoinColumn(nullable=false)
-    */
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * })
+     */
     private $user;
 
-
-    public function __construct(){
-        $this->date = (new \Datetime());
-        $this->publie = true;
-        $this->categories = new ArrayCollection();
-        $this->candidatures = new ArrayCollection();
-    }
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="Categorie", inversedBy="anonce")
+     * 
+     */
+    private $categories;
 
     /**
-     * @return int
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Competance", mappedBy="anonce" , cascade={"persist"})
     */
+    private $competance;
+
+
+    public function __construct()
+    {
+        $this->date = new \Datetime();
+        $this->candidature = new ArrayCollection();
+        $this->competance = new ArrayCollection();
+    }
+
+      /**
+   * @ORM\PreUpdate
+   */
+  public function updateDate()
+  {
+    $this->setUpdatedAt(new \Datetime());
+  }
+
+  public function incrementerCandidature()
+  {
+    $this->nbApplications++;
+  }
+
+  public function decrementerCandidature()
+  {
+    $this->nbApplications--;
+  }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-    * @return \DateTime
-    */
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
     }
 
-    /**
-    * @param \DateTime $date
-    */
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
@@ -143,17 +172,11 @@ class Anonce
         return $this;
     }
 
-    /**
-    * @return string
-    */
     public function getTitre(): ?string
     {
         return $this->titre;
     }
 
-    /**
-    * @param string $titre 
-    */
     public function setTitre(string $titre): self
     {
         $this->titre = $titre;
@@ -161,17 +184,11 @@ class Anonce
         return $this;
     }
 
-    /**
-    * @return string
-    */
     public function getAuteur(): ?string
     {
         return $this->auteur;
     }
 
-    /**
-    * @param string $auteur 
-    */
     public function setAuteur(string $auteur): self
     {
         $this->auteur = $auteur;
@@ -179,17 +196,11 @@ class Anonce
         return $this;
     }
 
-    /**
-    * @return string
-    */
     public function getContenu(): ?string
     {
         return $this->contenu;
     }
 
-    /**
-    * @param string $contenu 
-    */
     public function setContenu(string $contenu): self
     {
         $this->contenu = $contenu;
@@ -197,17 +208,11 @@ class Anonce
         return $this;
     }
 
-    /**
-    * @return bool
-    */
     public function getPublie(): ?bool
     {
         return $this->publie;
     }
 
-    /**
-    * @param bool $publie 
-    */
     public function setPublie(bool $publie): self
     {
         $this->publie = $publie;
@@ -215,149 +220,16 @@ class Anonce
         return $this;
     }
 
-    public function setImage(string $image)
-    {
-      $this->image = $image;
-    }
-  
-    public function getImage() : ?string
-    {
-      return $this->image;
-    }
-
-    /**
-     * @return Collection|Categorie[]
-     */
-    public function getCategories()
-    {
-      return $this->categories;
-    }
-
-    /**
-    * @param Categorie $category
-    */
-    public function addCategory(Categorie $category): self
-    {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
-        }
-
-        return $this;
-    }
-
-    /**
-    * @param Categorie $category
-    */
-    public function removeCategory(Categorie $category): self
-    {
-        if ($this->categories->contains($category)) {
-            $this->categories->removeElement($category);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Candidature[]
-     */
-    public function getCandidatures(): Collection
-    {
-        return $this->candidatures;
-    }
-
-    /**
-     * @param Candidature $candidature
-    */
-    public function addCandidature(Candidature $candidature): self
-    {
-        if (!$this->candidatures->contains($candidature)) {
-            $this->candidatures[] = $candidature;
-            $candidature->setAnonce($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Candidature $candidature
-    */
-    public function removeCandidature(Candidature $candidature): self
-    {
-        if ($this->candidatures->contains($candidature)) {
-            $this->candidatures->removeElement($candidature);
-            // set the owning side to null (unless already changed)
-            if ($candidature->getAnonce() === $this) {
-                $candidature->setAnonce(null);
-            }
-        }
-
-        return $this;
-    }
-    /**
-    * @ORM\PreUpdate
-    */
-    public function updateDate()
-    {
-      $this->setUpdatedAt(new \Datetime());
-    }
-
-    public function incrementerCandidature()
-    {
-      $this->nbCandidatures++;
-    }
-  
-    public function decrementerCandidature()
-    {
-      $this->nbCandidatures--;
-    }
-
-    /**
-    * @return \DateTime
-    */
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    /**
-    * @param \DateTime $updatedAt
-    */
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-    * @return integer
-    */
-    public function getNbCandidatures(): ?int
-    {
-        return $this->nbCandidatures;
-    }
-
-    /**
-    * @param integer $nbCandidatures
-    */
-    public function setNbCandidatures(int $nbCandidatures): self
-    {
-        $this->nbCandidatures = $nbCandidatures;
-
-        return $this;
-    }
-
-    /**
-    * @return string
-    */
     public function getSlug(): ?string
     {
         return $this->slug;
     }
 
-    /**
-    * @param string $slug
-    */
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
@@ -365,22 +237,28 @@ class Anonce
         return $this;
     }
 
-    /**
-    * @Assert\Callback
-    */
-    public function isContentValid(ExecutionContextInterface $context)
+    public function getImage(): ?string
     {
-        $forbiddenWords = array('démotivation', 'abandon');
+        return $this->image;
+    }
 
-        // On vérifie que le contenu ne contient pas l'un des mots
-        if (preg_match('#'.implode('|', $forbiddenWords).'#', $this->getContenu())) {
-        // La règle est violée, on définit l'erreur
-        $context
-        ->buildViolation('Contenu invalide car il contient un mot interdit.') // message
-        ->atPath('contenu')                                                   // attribut de l'objet qui est violé
-        ->addViolation() // ceci déclenche l'erreur, ne l'oubliez pas
-        ;
-         }
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getNbApplications(): ?int
+    {
+        return $this->nbApplications;
+    }
+
+    public function setNbApplications(int $nbApplications): self
+    {
+        $this->nbApplications = $nbApplications;
+
+        return $this;
     }
 
     public function getUser(): ?User
@@ -394,4 +272,86 @@ class Anonce
 
         return $this;
     }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Candidature[]
+     */
+    public function getCandidature(): Collection
+    {
+        return $this->candidature;
+    }
+
+    public function addCandidature(Candidature $candidature): self
+    {
+        if (!$this->candidature->contains($candidature)) {
+            $this->candidature[] = $candidature;
+            $candidature->setAnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidature(Candidature $candidature): self
+    {
+        if ($this->candidature->contains($candidature)) {
+            $this->candidature->removeElement($candidature);
+            // set the owning side to null (unless already changed)
+            if ($candidature->getAnonce() === $this) {
+                $candidature->setAnonce(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCategories(): ?Categorie
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(?Categorie $categories): self
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Competance[]
+     */
+    public function getCompetance(): Collection
+    {
+        return $this->competance;
+    }
+
+    public function addCompetance(Competance $competance): self
+    {
+        if (!$this->competance->contains($competance)) {
+            $this->competance[] = $competance;
+            $competance->setAnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetance(Competance $competance): self
+    {
+        if ($this->competance->contains($competance)) {
+            $this->competance->removeElement($competance);
+            // set the owning side to null (unless already changed)
+            if ($competance->getAnonce() === $this) {
+                $competance->setAnonce(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

@@ -13,6 +13,7 @@ use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Service\SupprimerAnnonce;
 
 
 class UserController extends AbstractController
@@ -26,7 +27,9 @@ class UserController extends AbstractController
 
     public function loginAction(AuthenticationUtils $autheutili)
     {
-
+      if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+        return $this->redirectToRoute('accueil');
+      }
       // Le service authentication_utils permet de récupérer le nom d'utilisateur
       // et l'erreur dans le cas où le formulaire a déjà été soumis mais était invalide
       // (mauvais mot de passe par exemple
@@ -67,13 +70,6 @@ class UserController extends AbstractController
     /**
     * @IsGranted("ROLE_AUTEUR")    
     */
-    public function Monprofile(){
-
-      return $this->render('Utilisateur/Monprofile.html.twig');
-    }
-    /**
-    * @IsGranted("ROLE_AUTEUR")    
-    */
     public function ModiferProfile(Request $request, UserPasswordEncoderInterface $passwordEncoder){
 
         $user = $this->getUser();
@@ -94,7 +90,7 @@ class UserController extends AbstractController
   
             // do anything else you need here, like send an email
             $this->addFlash('info', 'Profil mis a jour avec succes');
-            return $this->redirectToRoute('mon_profile');
+            return $this->redirectToRoute('modifier_profile');
         }
   
         return $this->render('Utilisateur/modifierProfile.html.twig', [
@@ -129,4 +125,63 @@ class UserController extends AbstractController
         'page'        => $page,
       ));
     }
+    public function listeUsers($page){
+      $user = new User();
+      $user = new User();
+      if ($page < 1) {
+        return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cette page n'existe pas!!" ]);
+      }
+      $nbParPage = 3; 
+      $users = $this->em->getRepository(User::class)->findAllUsers($page , $nbParPage);
+
+      $nbPages = ceil(count($users) / $nbParPage);
+        
+      if ($page > $nbPages && $nbPages>0) {
+        return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cette page n'existe pas!!" ]);;
+      }
+
+      return $this->render('Utilisateur/listeUsers.html.twig' , [
+        'users' => $users,
+        'nbPages' => $nbPages,
+        'page' => $page,
+      ]);
+
+    }
+    /**
+    * @IsGranted("ROLE_ADMIN")    
+    */
+    public function OneUser(Request $request){
+      $user = new User();
+
+      $terme = $request->get('terme');
+      $user = $this->em->getRepository(User::class)->findOneByUsername($terme);
+
+      return $this->render('Utilisateur/usersearch.html.twig' , [
+        'user' => $user,
+      ]);
+    }
+
+    /**
+    * @IsGranted("ROLE_ADMIN")    
+    */
+    public function suppUser($id , SupprimerAnnonce $supp){
+      $user = new User();
+
+      $user = $this->em->getRepository(User::class)->find($id);
+      if (null === $user) {
+        return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cet utilisateur n'existe pas!!" ]);
+      }
+        $anonces = $this->em->getRepository(Anonce::class)->findBy(array('user' => $user));
+
+        foreach ($anonces as $anonce) {
+          $supp->supp($anonce);
+        }
+        $this->em->remove($user);
+        $this->em->flush();
+
+        $this->addFlash('info', "L'utilisateur a bien été supprimée.");
+  
+        return $this->redirectToRoute('liste_users' , array('page' => 1));
+      }
+
 }

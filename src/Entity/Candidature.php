@@ -1,8 +1,10 @@
 <?php
 
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Anonce;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -22,20 +24,23 @@ class Candidature
   /**
    * @ORM\Column(name="auteur", type="string", length=255)
    * @Assert\NotBlank()
-   * @Assert\Length(min=2 , minMessage="Le nom de L'auteur doit faire au moins 2 caractères.")
+   * @Assert\Length(min=2 , minMessage="The name should be at least 2 characters")
    */
   private $auteur;
 
-  /**
-   * @ORM\Column(name="email" , type="string" , length=100)
-   * @Assert\NotBlank()
-   * @Assert\Email()
-   */
-  private $email;
+/**
+ * @var string
+ *
+ * @ORM\Column(name="email", type="string", length=180, nullable=false)
+ * @Assert\NotBlank()
+ * @Assert\Email()
+ */
+    private $email;
 
   /**
    * @ORM\Column(name="contenu", type="text")
    * @Assert\NotBlank()
+   * @Assert\Length(min=2 , minMessage="The contain should be at least 2 characters")
    */
   private $contenu;
 
@@ -45,83 +50,42 @@ class Candidature
   private $date;
 
   /**
-   * @ORM\ManyToOne(targetEntity="App\Entity\Anonce" , inversedBy="candidatures")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Anonce", inversedBy="candidature")
    * @ORM\JoinColumn(nullable=false)
    */
   private $anonce;
-  
+
   public function __construct()
   {
     $this->date = new \Datetime();
   }
 
-  /**
-   * @return int 
+   /**
+   * @ORM\PrePersist
    */
-  public function getId()
+  public function increase()
   {
-    return $this->id;
-  }
-
-  public function setAuthor($auteur)
-  {
-    $this->auteur = $auteur;
-
-    return $this;
+    $this->getAnonce()->incrementerCandidature();
   }
 
   /**
-   * @return int 
+   * @ORM\PreRemove
    */
-  public function getAuthor()
+  public function decrease()
   {
-    return $this->auteur;
+    $this->getAnonce()->decrementerCandidature();
   }
 
-  public function setContent($contenu)
+  public function getId(): ?int
   {
-    $this->content = $contenu;
-
-    return $this;
+      return $this->id;
   }
 
-  /**
-   * @return int 
-   */
-  public function getContent()
-  {
-    return $this->contenu;
-  }
-
-  /**
-   * @param \Datetime $date
-   */
-  public function setDate(\Datetime $date)
-  {
-    $this->date = $date;
-
-    return $this;
-  }
-
-  /**
-   * @return \Datetime
-   */
-  public function getDate()
-  {
-    return $this->date;
-  }
-
-  /**
-   * @return string
-   */
   public function getAuteur(): ?string
   {
       return $this->auteur;
   }
 
-  /**
-   * @param string $auteur
-   */
   public function setAuteur(string $auteur): self
   {
       $this->auteur = $auteur;
@@ -129,17 +93,11 @@ class Candidature
       return $this;
   }
 
-  /**
-   * @return string
-   */
   public function getContenu(): ?string
   {
       return $this->contenu;
   }
 
-  /**
-   * @param string $contenu
-   */
   public function setContenu(string $contenu): self
   {
       $this->contenu = $contenu;
@@ -147,52 +105,41 @@ class Candidature
       return $this;
   }
 
-  /**
-   * @return Anonce
-   */
-  public function getAnonce(): ?Anonce
+  public function getDate(): ?\DateTimeInterface
   {
-      return $this->anonce;
+      return $this->date;
   }
 
-  /**
-   * @param Anonce $anonce
-   */
-  public function setAnonce(?Anonce $anonce): self
+  public function setDate(\DateTimeInterface $date): self
   {
-      $this->anonce = $anonce;
+      $this->date = $date;
 
       return $this;
   }
-  
-  /**
-  * @ORM\PrePersist
-  */
-  public function incrementer(){
-    $this->getAnonce()->incrementerCandidature();
-  }
-  /**
-   * ORM\PreRemove
-   */
-  public function decremeneter(){
-    $this->getAnonce()->decrementerCandidature();
-  }
 
-  /**
-   * @return string
-   */
   public function getEmail(): ?string
   {
       return $this->email;
   }
 
-  /**
-   * @param string $email
-   */
   public function setEmail(string $email): self
   {
       $this->email = $email;
 
       return $this;
   }
+
+  public function getAnonce(): ?Anonce
+  {
+      return $this->anonce;
+  }
+
+  public function setAnonce(?Anonce $anonce): self
+  {
+      $this->anonce = $anonce;
+
+      return $this;
+  }
+
+ 
 }

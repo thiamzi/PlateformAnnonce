@@ -1,75 +1,166 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{% block title %}plateforme d'annonces{% endblock %}</title>
+		<title>
+			{% block title %}plateforme d'annonces
+			{% endblock %}
+		</title>
 
-  {% block stylesheets %}
-    {# On charge le CSS de bootstrap depuis le site directement #}
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  {% endblock %}
-</head>
+		{% block stylesheets %}
+			{# On charge le CSS de bootstrap depuis le site directement #}
+			{{encore_entry_link_tags('app')}}
+			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://i.icomoon.io/public/temp/d5ff15105f/UntitledProject/style.css">
+		{% endblock %}
+	</head>
 
-<body>
-  <div class="container">
-    <div id="header" class="jumbotron">
-      <h1>{% trans %}Ma plateforme d'annonces{% endtrans %}</h1>
-      <p>
-        {% trans %}Ce projet est propulsé par Symfony,
-        et construit grâce au MOOC OpenClassrooms et SensioLabs.{% endtrans %}
-      </p>
-      <p>
-        <a class="btn btn-primary btn-lg" href="https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony2">
-          {% trans %}Participer au MOOC »{% endtrans %}
-        </a>
-      </p>
-      {% if app.user %}
-        <h2>
-          {% trans %}Bienvenue{% endtrans %} {{app.user.nom}}
-        </h2>
-      {% endif %}
-    </div>
+	<body>
+		<div class="container-fulid">
+			<nav class="navbar navbar-default" id="di">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav navbar-left">
+						<li id="sen">
+							<p>Plateforme d'Anonces</p>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
 
-    <div class="row">
-      <div id="menu" class="col-md-3">
-        <h3>Menu</h3>
-        <ul class="nav nav-pills nav-stacked">
-          <li><a href="{{ path('accueil' , {'page' : 1}) }}">{% trans %}Accueil{% endtrans %}</a></li>
-          {% if not is_granted('ROLE_AUTEUR') and not is_granted('ROLE_ADMIN')%}
-            <li><a href="{{ path('loginn') }}">{% trans %}Se connecter{% endtrans %}</a></li>
-          {% endif %}
-          {% if is_granted('ROLE_AUTEUR') %}
-            <li><a href="{{ path('mon_profile') }}">{% trans %}Mon profile{% endtrans %}</a></li>
-            <li><a href="{{ path('anonce_mesAnonces' , {'page' : 1}) }}">{% trans %}Mes annonces{% endtrans %}</a></li>
-            <li><a href="{{ path('anonce_ajout') }}">{% trans %}Ajouter une annonce{% endtrans %}</a></li>
-            <li><a href="{{ path('logout') }}">{% trans %}Se deconnecter{% endtrans %}</a></li>
-          {% endif %}
-        </ul>
+						<li class="nav navbar-nav " id="men2">
+							<form action="{{ path('resultat_search' , {'page' : 1}) }}" method="get" class="form-inline my-2 my-lg-0">
+								<input class="form-control mr-sm-2" name="terme" type="search" placeholder="annonce..." aria-label="Search">
+								<button class="btn btn-outline-success my-2 my-sm-0" type="submit">{% trans %}recherche{% endtrans %}</button>
+							</form>
+						</li>
 
-        <h4>{% trans %}Dernières annonces{% endtrans %}</h4>
-        {{ render(controller("App\\Controller\\LayoutController::DernierAnonces", {'limit': 5})) }}
-      </div>
-      <div id="content" class="col-md-9">
-        {% block body %}
-        {% endblock %}
-      </div>
-    </div>
+						{% if not is_granted('ROLE_AUTEUR') and not is_granted('ROLE_ADMIN')%}
+							<li id="men">
+								<a href="{{ path('loginn') }}">{% trans %}Se connecter{% endtrans %}</a>
+							</li>
+						{% endif %}
 
-    <hr>
+						{% if is_granted('ROLE_AUTEUR') %}
+							<li id="men1">
+								<div class="btn-group">
+									<button type="button" class="btn btn-primaryy dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										{{app.user.username}}
+									</button>
+									<div class="dropdown-menu" id="lis">
+										<ul>
+											<li class="dropdown-item">
+												<span class="glyphicon glyphicon-edit"></span>
+												<a href="{{ path('modifier_profile') }}">{% trans %}Modifier profile{% endtrans %}</a>
+											</li>
+											<li href="{{ path('logout') }}" class="dropdown-item">
+												<span class="glyphicon glyphicon-list-alt"></span>
+												<a href="{{ path('anonce_mesAnonces' , {'page' : 1}) }}">{% trans %}Mes annonces{% endtrans %}</a>
+											</li>
+											<li class="dropdown-item">
+												<span class="glyphicon glyphicon-off"></span>
+												<a href="{{ path('logout') }}">{% trans %}Se deconnecter{% endtrans %}</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			</nav>
 
-    <footer>
-      <div class="pull-right">
-      <p>The sky's the limit © {{ 'now'|date('Y') }} and beyond.</p>
-      </div>
-    </footer>
-  </div>
-  {% block javascripts %}
-    {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  {% endblock %}
+			<nav class="navbar navbar-default container-fluid" id="cat">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav" id="acc">
+						<li>
+							<a href="{{ path('accueil' , {'page' : 1}) }}">
+								<span class="glyphicon glyphicon-home"></span>
+								{% trans %}Accueil{% endtrans %}</a>
+						</li>
+						{% if is_granted('ROLE_AUTEUR') %}
+							<li>
+								<a href="{{ path('anonce_ajout') }}">
+									<span class="glyphicon glyphicon-plus"></span>
+									{% trans %}Ajouter annonce{% endtrans %}</a>
+							</li>
+						{% endif %}
+						{% if is_granted('ROLE_ADMIN') %}
+							<li>
+								<a href="{{ path('purger') }}">
+									<span class="glyphicon glyphicon-trash"></span>
+									{% trans %}Purger{% endtrans %}</a>
+							</li>
+							<li>
+								<a href="{{ path('liste_users' , {'page' : 1} ) }}">
+									<span class="glyphicon glyphicon-list"></span>
+									{% trans %}Utilisateurs{% endtrans %}</a>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			</nav>
 
-</body>
-</html>
+			<div class="row">
+				<div id="menu" class="col-md-2">
+					{{ render(controller("App\\Controller\\LayoutController::Categorie")) }}
+				</div>
+				<div id="content" class="col-md-10"> {% block body %}{% endblock %}
+					</div>
+				</div>
+			</div>
+		</body>
+	</html>
+</br>
+<footer>
+	<nav class="navbar navbar-default container-fluid" id="foot">
+		<div class="container-fluid">
+			<ul class="nav navbar-nav navbar-left">
+				<li>
+					<a>The sky's the limit ©
+						{{ 'now'|date('Y') }}
+						and beyond.
+					</a>
+				</li>
+				<li>
+					<a href="">A propos</a>
+				</li>
+				<li>
+					<a href="">Contact</a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="">
+						<span class="icon-linkedin"></span>
+					</a>
+				</li>
+				<li>
+					<a href="">
+						<span class="icon-facebook"></span>
+					</a>
+				</li>
+				<li>
+					<a href="">
+						<span class="icon-twitter"></span>
+					</a>
+				</li>
+				<li>
+					<a href="">
+						<span class="icon-instagram"></span>
+					</a>
+				</li>
+				<li>
+					<a href="">
+						<span class="icon-whatsapp"></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</footer>
+{% block javascripts %}
+	{# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+{% endblock %}</html>

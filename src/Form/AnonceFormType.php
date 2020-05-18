@@ -12,13 +12,15 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Form\ImageType;
+use App\Entity\Categorie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Validator\Constraints\File;
+use App\Form\CompetanceType;
 
 class AnonceFormType extends AbstractType
 {
@@ -47,14 +49,19 @@ class AnonceFormType extends AbstractType
                   ])
               ],
           ])
-            ->add('categories', EntityType::class, array(
-                'class'        => 'App\Entity\Categorie',
-                'choice_label' => 'nom',
-                'multiple'     => true,
-                'expanded'     => true,
+          ->add('competance', CollectionType::class, array(
+            'entry_type'   => CompetanceType::class,
+            'entry_options' => ['label' => false],
+            'allow_add'    => true,
+            'allow_delete' => true
+          ))
 
-              ))
-            ->add('save' , SubmitType::class)
+          ->add('categories', EntityType::class, [
+            'class' => Categorie::class,
+            'choice_label' => 'nom',
+            'multiple' => false,
+            'expanded' => true,
+          ])
         ;
 
             // On ajoute une fonction qui va écouter un évènement
@@ -72,7 +79,7 @@ class AnonceFormType extends AbstractType
           // Si l'annonce n'est pas publiée, ou si elle n'existe pas encore en base (id est null)
           if (!$anonce->getPublie() || null === $anonce->getId()) {
             // Alors on ajoute le champ published
-            $event->getForm()->add('publie', CheckboxType::class, array('required' => false));
+            $event->getForm()->add('publie', CheckboxType::class, array('required' => true));
           } else {
             // Sinon, on le supprime
             $event->getForm()->remove('publie');

@@ -4,7 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Categorie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method Categorie|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,5 @@ class CategorieRepository extends ServiceEntityRepository
         ;
     }
     */
+    
 }

@@ -397,6 +397,11 @@
         <source>The CSRF token is invalid. Please try to resubmit the form.</source>
         <target>Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.</target>
       </trans-unit>
+      <trans-unit id="fvxWW3V1" resname="Your password should be at least 6 characters">
+        <source>Your password should be at least 6 characters.</source>
+        <target>Le mot de passe doit contenir au moins 6 caracteres.</target>
+      </trans-unit>
+      
     </body>
   </file>
 </xliff>

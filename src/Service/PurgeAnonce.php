@@ -3,15 +3,18 @@
 namespace App\Service;
 
 use App\Entity\Anonce;
-use App\Entity\AnonceCompetance;
+use App\Entity\Competance;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\EnvoyerEmail;
 
 class PurgeAnonce
 {
   private $em;
-  public function __construct(EntityManagerInterface $em)
+  private $email;
+  public function __construct(EntityManagerInterface $em , EnvoyerEmail $email)
   {
     $this->em = $em;
+    $this->email = $email;
   }
 
   public function purge($jours){
@@ -20,23 +23,29 @@ class PurgeAnonce
     $date = new \Datetime($jours.' days ago');
 
     // On récupère les annonces à supprimer
-    $listeAnonces = $this->em->getrepository(Anonce::class)->Anoncepurge($date);
+    $listeAnonces = $this->em->getrepository(Anonce::class)->AnonceApurger($date);
 
     // On parcourt les annonces pour les supprimer effectivement
+    $i = 0;
     foreach ($listeAnonces as $anonce) {
       // On récupère les AdvertSkill liées à cette annonce
-      $anoncesCompetances = $this->em->getrepository(AnonceCompetance::class)->findBy(array('anonce' => $anonce));
+      $competances = $this->em->getrepository(Competance::class)->findBy(array('anonce' => $anonce));
 
       // Pour les supprimer toutes avant de pouvoir supprimer l'annonce elle-même
-      foreach ($anoncesCompetances as $anonceCompetance) {
-        $this->em->remove($anonceCompetance);
+      foreach ($competances as $anonceCocompetancesmpetance) {
+        $this->em->remove($anonceCompetacompetancesnce);
       }
 
       // On peut maintenant supprimer l'annonce
+      $this->email->notificationPurge($anonce);
       $this->em->remove($anonce);
+
+      $i++;
     }
 
     // Et on n'oublie pas de faire un flush !
     $this->em->flush();
+    return $i;
   }
+  
 }

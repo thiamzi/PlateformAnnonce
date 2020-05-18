@@ -3,27 +3,24 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use App\Service\SpamService;
 use App\Entity\Anonce;
 use App\Entity\Candidature;
-use App\Entity\Image;
-use App\Entity\AnonceCompetance;
+use App\Entity\Categorie;
+use App\Entity\Competance;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\AnonceFormType;
-use App\Form\ModifierAnonceType;
 use App\Form\CandidatureType;
 use App\Service\PurgeAnonce;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Service\security\controleurformLogin;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use App\Service\ImgUploader;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Service\EnvoyerEmail;
-
+use App\Service\SupprimerAnnonce;
+use App\Form\SearchType;
 
 class AnonceController extends AbstractController
 {
@@ -62,8 +59,31 @@ class AnonceController extends AbstractController
       );
     }
 
-    public function vue($id){
-      $anonce = $this->em->getRepository(Anonce::class)->find($id);
+    public function ListeAnoncesCategorie($page , Categorie $categorie){
+  
+        if ($page < 1) {
+          return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cette page n'existe pas!!" ]);
+        }
+  
+        $nbParPage = 3; 
+  
+        $anonces = $this->em->getRepository(Anonce::class)->CategorieAnonces($page , $nbParPage , $categorie->getId());
+
+        $nbPages = ceil(count($anonces) / $nbParPage);
+        
+        if ($page > $nbPages && $nbPages>0) {
+          return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cette page n'existe pas!!" ]);;
+        }
+  
+        return $this->render('anonce/anonceCategorie.html.twig' , [
+          'anonces' => $anonces,
+          'nbPages'     => $nbPages,
+          'page'        => $page,
+          'categorie'   => $categorie,
+        ]);
+      }
+
+    public function vue(Anonce $anonce){
       if (null === $anonce) {
         return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cet Anonce n'existe pas!!" ]);
       }
@@ -78,13 +98,13 @@ class AnonceController extends AbstractController
       $listCandidatures = $this->em->getRepository(Candidature::class)->findBy(array('anonce' => $anonce));
 
       // Récupération des AdvertSkill de l'annonce
-      $listAnoncesCompetances = $this->em->getRepository(AnonceCompetance::class)->findBy(array('anonce' => $anonce));
+      $listCompetances = $this->em->getRepository(Competance::class)->findBy(array('anonce' => $anonce));
 
       return $this->render('anonce/detail.html.twig' , [
         'anonce' => $anonce, 
         'categories' => $categories,
         'Candidatures' => $listCandidatures,
-        'AnoncesCompet' => $listAnoncesCompetances,
+        'Competances' => $listCompetances,
         'verif' => $verif 
         ]);
     }
@@ -98,27 +118,36 @@ class AnonceController extends AbstractController
       $anonce = new Anonce();
       $form = $this->createForm(AnonceFormType::class, $anonce);
 
-      $anonce->setAuteur($this->getUser()->getNom());
+      $anonce->setAuteur($this->getUser()->getUsername());
       $anonce->setUser($this->getUser());
       $form->handleRequest($request);
-      
       if ($request->isMethod('POST')) {
         // On vérifie que les valeurs entrées sont correctes
-
-        if ($form->isValid()) {
-        /** @var UploadedFile $imageFile */
-        $imageFile = $form['image']->getData();
-        if ($imageFile) {
+  
+          /** @var UploadedFile $imageFile */
+          $imageFile = $form['image']->getData();
+          if ($imageFile) {
             $nom = $fileUploader->upload($imageFile);
             $anonce->setImage($nom);
-        }
+          }
+          
+          if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+            $anonce->setPublie(false);
+          }
           $this->em->persist($anonce);
           $this->em->flush();
-  
+
+          $competances = $anonce->getCompetance();
+
+          foreach ($competances as $competance){
+          $competance->setAnonce($anonce);
+          }
+          $this->em->flush();
+
           $this->addFlash('info', 'Annonce bien enregistrée.');
           return $this->redirectToRoute('anonce_detail', array('id' => $anonce->getId()));
+          
         }
-      }
         return $this->render('anonce/ajout.html.twig' , array(
           'form' => $form->createView(),
         ));
@@ -140,41 +169,42 @@ class AnonceController extends AbstractController
         return $this->render('Utilisateur/AccesRefuse.html.twig' , ['refuse' => "Acces refuse!!" ]);
       }
 
-      $form = $this->createForm(ModifierAnonceType::class, $anonce);
+      $form = $this->createForm(AnonceFormType::class, $anonce);
+
+      $form->handleRequest($request);
       if ($request->isMethod('POST')) {
+        // On vérifie que les valeurs entrées sont correctes
+  
+          /** @var UploadedFile $imageFile */
+          $imageFile = $form['image']->getData();
+          if ($imageFile) {
+            $nom = $fileUploader->upload($imageFile);
+            $anonce->setImage($nom);
+          }
 
-        $form->handleRequest($request);
-        //verifier si formulaire est valide en faisant appel au service du validator
-        if ($form->isValid()) {
-        
-        /** @var UploadedFile $imageFile */
-        $imageFile = $form['image']->getData();
-        if ($imageFile) {
-          unlink($this->getParameter('mes_images').'/'. $anonce->getImage());
-          $nom = $fileUploader->upload($imageFile);
-          $anonce->setImage($nom);
-        }
+          $this->em->flush();
 
+          $competances = $anonce->getCompetance();
+
+          foreach ($competances as $competance){
+          $competance->setAnonce($anonce);
+          }
           $this->em->flush();
 
           $this->addFlash('info', 'Annonce bien mise en jour.');
           return $this->redirectToRoute('anonce_detail', array('id' => $anonce->getId()));
-        }
       }
-
-      else{
         return $this->render('anonce/modifier.html.twig' , array(
           'form' => $form->createView(), 
           'anonce' => $anonce, 
         ));
-      }
     }
 
 
     /**
     * @IsGranted("ROLE_AUTEUR")    
     */
-    public function supprimer(Request $request , $id){
+    public function supprimer(Request $request , $id ,  SupprimerAnnonce $supp){
       $anonce = $this->em->getRepository(Anonce::class)->find($id);
       if (null === $anonce) {
         return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cet Anonce n'existe pas!!" ]);
@@ -185,12 +215,10 @@ class AnonceController extends AbstractController
       // On crée un formulaire vide, qui ne contiendra que le champ CSRF
       // Cela permet de protéger la suppression d'annonce contre cette faille
       $form = $this->get('form.factory')->create();
-  
+
       if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-        unlink($this->getParameter('mes_images').'/'. $anonce->getImage());
-        $this->em->remove($anonce);
-        $this->em->flush();
-  
+
+        $supp->supp($anonce);
         $this->addFlash('info', "L'annonce a bien été supprimée.");
   
         return $this->redirectToRoute('accueil' , array('page' => 1));
@@ -212,36 +240,53 @@ class AnonceController extends AbstractController
       $form->handleRequest($request);
       // On vérifie que les valeurs entrées sont correctes
       // (Nous verrons la validation des objets en détail dans le prochain chapitre)
-      if ($form->isValid()) {
+      if ($form->isSubmitted() && $form->isValid()) {
         $anonce->addCandidature($candidature);
         $this->em->persist($candidature);
         $this->em->flush();
 
-        $email->sendNewNotification($candidature  , $anonce);
+        $email->notificationCandidature($candidature  , $anonce);
 
         $this->addFlash('info', 'Candidature bien enregistrée.');
       return $this->redirectToRoute('anonce_detail', array('id' => $anonce->getId()));
       }
     }
-    else{
       return $this->render('anonce/candidature.html.twig' , array(
         'form' => $form->createView(),
       ));
-    }
   }
   /**
   * @IsGranted("ROLE_ADMIN")    
   */
-  public function purgeAction($jours, Request $request , PurgeAnonce $puger)
+  public function purgeAction($jours = 2, Request $request , PurgeAnonce $purger)
   {
     // On purge les annonces
-    $purger->purge($jours);
+    $i = $purger->purge($jours);
 
     // On ajoute un message flash arbitraire
-    $this->addFlash('info', 'Les annonces plus vieilles que '.$jours.' jours ont été purgées.');
+    $this->addFlash('info', $i.' annonces vieilles plus que '.$jours.' jours ont été purgées.');
 
     // On redirige vers la page d'accueil
     return $this->redirectToRoute('accueil', array('page'  =>  1));
+  }
+
+  public function recherche($page , Request $request){
+
+    $terme = $request->get('terme');
+
+    $nbParPage = 3; 
+    $anonces = $this->em->getRepository(Anonce::class)->search($page , $nbParPage ,$terme);
+    $nbPages = ceil(count($anonces) / $nbParPage);
+        
+    if ($page > $nbPages && $nbPages>0) {
+      return $this->render('anonce/notFound.html.twig' , ['notFound' => "Cette page n'existe pas!!" ]);;
+    }
+
+    return $this->render('anonce/recherche.html.twig', array(
+      'anonces' => $anonces,
+      'nbPages'     => $nbPages,
+      'page'        => $page,
+    ));
   }
 }
 

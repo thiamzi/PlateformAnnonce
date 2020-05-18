@@ -1,0 +1,51 @@
+{% extends "layout/layout.html.twig" %}
+
+{% block title %}
+	{% trans %}Accueil{% endtrans %}
+	-
+	{{ parent() }}
+{% endblock %}
+
+{% block corps_plat %}
+
+	<legend id="leg">
+		{% for message in app.flashes('info') %}
+			<div id="cree" class="flash-success">{{ message }}</div>
+		{% endfor %}
+		{% trans %}Liste des Utilisateurs{% endtrans %}
+		<ul class="pull-right">
+			<form action="{{ path('usersearch' )}}" method="get" class="form-inline">
+				<input class="form-control mr-sm-2" name="terme" type="search" placeholder="username" aria-label="Search">
+				<button class="btn btn-outline-success" type="submit">{% trans %}recherche{% endtrans %}</button>
+			</form>
+		</ul>
+	</legend>
+	<div class="list-group">
+		{% for user in users %}
+			<div class="list-group-item" style="border-bottom : 7px solid gray">
+				<div class="list-group-item-heading">
+					<div style="margin-left: 5%;">
+						<h3 style="margin-top: 0px;">{{user.username }}
+							<a class="btn btn-danger pull-right" href="{{ path('supp_user', {'id': user.id}) }}">
+								<span id="eye" class="glyphicon glyphicon-trash"></span>
+								{% trans %}Supprimer{% endtrans %}</a>
+							<h5>{{user.email}}</h5>
+						</h3>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<p>{% trans %}Pas (encore !) d'utilistaures{% endtrans %}</p>
+		{% endfor %}
+	</div>
+	<ul
+		class="pagination">
+		{# On utilise la fonction range(a, b) qui crée un tableau de valeurs entre a et b #}
+		{% for p in range(1, nbPages) %}
+			<li {% if p == page %} class="active" {% endif %}>
+				<a href="{{ path('accueil', {'page': p}) }}">{{ p }}</a>
+			</li>
+		{% endfor %}
+	</ul>
+
+{% endblock %}

@@ -5,15 +5,38 @@
 {% endblock %}
 
 {% block corps_plat %}
-  <h1>{% trans %}Poser votre candidature{% endtrans %}</h1>
-
-  {{ include("anonce/formulaire.html.twig") }}
-
-  <p>
-    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
-      <i class="glyphicon glyphicon-chevron-left"></i>
-      {% trans %}Retour à l'accueil{% endtrans %}
-    </a>
-  </p>
+	<div id="connexion" class="row" style="margin-right: 10%;">
+		<fieldset class="col-sm-9 col-sm-offset-2">
+			<legend>
+				<h2>{% trans %}Poser candidature{% endtrans %}</h2>
+			</legend>
+			<div class="col-sm-8 col-sm-offset-2">
+				{{ form_start(form , {'method': 'POST'}) }}
+				<div class="form-group">
+					<label for="auteur">{% trans %}Nom{% endtrans %}</label>
+					{{ form_widget(form.auteur) }}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.auteur) }}
+				</div>
+				<div class="form-group">
+					<label for="email">{% trans %}Adresse Email{% endtrans %}</label>
+					{{ form_widget(form.email) }}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.email) }}
+				</div>
+				<div class="form-group">
+					<label for="email">{% trans %}Contenu{% endtrans %}</label>
+					{{ form_widget(form.contenu)}}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.contenu) }}
+				</div>
+				<button id="btc" class="btn btn-default">valider</button>
+				{{ form_end(form) }}
+			</div>
+		</fieldset>
+	</div>
 
   {% endblock %}

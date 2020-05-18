@@ -75,14 +75,48 @@ register :
     requirements : 
         _locale: en|fr
 
-mon_profile : 
-    path:       /{_locale}/accueil/profile
-    controller: App\Controller\UserController::Monprofile
-    requirements : 
-        _locale: en|fr
-
 modifier_profile :
     path:       /{_locale}/accueil/profile/modifier
     controller: App\Controller\UserController::ModiferProfile
     requirements : 
         _locale: en|fr 
+
+anonce_ategorie :
+    path:       /{_locale}/accueil/categorie/{id}/{page}
+    controller: App\Controller\AnonceController::ListeAnoncesCategorie
+    requirements : 
+        _locale: en|fr
+        id : \d+
+        page : \d+
+
+resultat_search:
+    path:       /{_locale}/accueil/recherche/{page}
+    controller: App\Controller\AnonceController::recherche
+    requirements : 
+        _locale: en|fr
+        page : \d+
+
+purger:
+    path:       /accueil/purger
+    controller: App\Controller\AnonceController::purgeAction
+
+
+liste_users:
+    path:       /{_locale}/accueil/users/{page}
+    controller: App\Controller\UserController::listeUsers
+    requirements : 
+        _locale: en|fr
+        page : \d+
+
+usersearch:
+    path:       /{_locale}/accueil/Oneuser
+    controller: App\Controller\UserController::OneUser
+    requirements : 
+        _locale: en|fr
+
+supp_user:
+    path:       /{_locale}/accueil/suppUser/{id}
+    controller: App\Controller\UserController::suppUser
+    requirements : 
+        _locale: en|fr
+        page : \d+

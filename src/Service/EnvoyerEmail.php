@@ -4,8 +4,10 @@ namespace App\Service;
 
 use App\Entity\Candidature;
 use App\Entity\Anonce;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class EnvoyerEmail
+
+class EnvoyerEmail extends AbstractController
 {
   /**
    * @var \Swift_Mailer
@@ -17,7 +19,7 @@ class EnvoyerEmail
     $this->mailer = $mailer;
   }
 
-  public function sendNewNotification(Candidature $candidature , Anonce $anonce)
+  public function notificationCandidat(Candidature $candidature , Anonce $anonce)
   {
     $message = new \Swift_Message(
       'Nouvelle candidature',
@@ -27,14 +29,32 @@ class EnvoyerEmail
     $message
       ->setTo($anonce->getUser()->getEmail()) 
       ->setFrom('thiamzirabm@gmail.com')
-      >setBody(
+      ->setBody(
         $this->renderView(
-          'layout/email.txt.twig',
-          ['name' => $candidature]
+          'email/emailCandidat.txt.twig',
+          ['candidature' => $candidature]
         )
       )
     ;
+    $this->mailer->send($message);
+  }
 
+  public function notificationPurge(Anonce $anonce)
+  {
+    $message = new \Swift_Message(
+      'Nouvelle purge'
+    );
+
+    $message
+      ->setTo($anonce->getUser()->getEmail()) 
+      ->setFrom('thiamzirabm@gmail.com')
+      ->setBody(
+        $this->renderView(
+          'email/emailPurge.txt.twig',
+          ['anonce' => $anonce]
+        )
+      )
+    ;
     $this->mailer->send($message);
   }
 }

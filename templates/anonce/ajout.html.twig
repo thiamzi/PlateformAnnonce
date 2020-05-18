@@ -1,20 +1,98 @@
 {% extends "layout/layout.html.twig" %}
 
 {% block title %}
-  {% trans %}Ajouter une annonce{% endtrans %} - {{ parent() }}
+	{% trans %}Ajouter une annonce{% endtrans %}
+	-
+	{{ parent() }}
 {% endblock %}
 
 {% block corps_plat %}
+	<div id="connexion" class="row" style="margin-right: 10%;">
+		<fieldset class="col-sm-9 col-sm-offset-2">
+			<legend>
+				<h2>{% trans %}Ajouter annonce{% endtrans %}</h2>
+			</legend>
+			<div class="col-sm-8 col-sm-offset-2">
+				{{ form_start(form , {'method': 'POST'}) }}
+				<div class="form-group">
+					<label for="email">{% trans %}Titre{% endtrans %}</label>
+					{{ form_widget(form.titre) }}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.titre) }}
+				</div>
+				<div class="form-group">
+					<label for="email">{% trans %}Contenu{% endtrans %}</label>
+					{{ form_widget(form.contenu) }}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.contenu) }}
+				</div>
+				<div class="form-group">
+					<label for="image">{% trans %}Image{% endtrans %}</label>
+					{{ form_widget(form.image)}}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.image) }}
+				</div>
+				<label for="categories">{% trans %}Categorie{% endtrans %}</label>
+				<div class="form-group" id="formcate">
+					{{ form_widget(form.categories)}}
+				</div>
+				<div class="form-error" id="err">
+					{{ form_errors(form.categories) }}
+				</div>
+				<div class="well">
+					{{form_row(form.competance)}}
+				</div>
+				<button id="btc" type="submit" class="btn btn-default">valider</button>
+			</div>
+		</fieldset>
+	</div>
 
-  <h2>{% trans %}Ajouter une annonce{% endtrans %}</h2>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+	var $collectionHolder;
+	var $addTagButton = $('<button  type="button" class="btn btn-success">Ajouter</button>');
+	var $newLinkLi = $('<div style="margin-top : 10px"></div>').append($addTagButton);
 
-  {{ include("anonce/formulaire.html.twig") }}
+	jQuery(document).ready(function() {
 
-  <p>
-    <a href="{{ path('accueil' , {'page' : 1}) }}" class="btn btn-default">
-      <i class="glyphicon glyphicon-chevron-left"></i>
-      {% trans %}Retour à l'accueil{% endtrans %}
-    </a>
-  </p>
+    	$collectionHolder = $('div#anonce_form_competance');
+    	$collectionHolder.append($newLinkLi);
+		$collectionHolder.data('index', $collectionHolder.find('input').length);
 
-  {% endblock %}
+    	$addTagButton.on('click', function(e) {
+        	addTagForm($collectionHolder, $newLinkLi);
+    	});
+
+	});
+	function addTagForm($collectionHolder, $newLinkLi) {
+
+    	var prototype = $collectionHolder.data('prototype');
+    	var index = $collectionHolder.data('index');
+    	newForm = prototype;
+    	newForm = newForm.replace(/__name__/g, index)
+    	$collectionHolder.data('index', index + 1);
+    	var $newFormLi = $('<div></div>').append(newForm);
+    	$newLinkLi.before($newFormLi);
+
+		addDeleteLink($newFormLi) 
+	}
+
+	function addDeleteLink($prototype) {
+
+      var $deleteLink = $('<a href="#" class="btn btn-danger">Supprimer</a>');
+      $prototype.append($deleteLink);
+
+      $deleteLink.click(function(e) {
+        $prototype.remove();
+
+        e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+        return false;
+      });
+    }
+	
+</script>
+
+{% endblock %}

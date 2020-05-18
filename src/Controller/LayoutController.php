@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Anonce;
+use App\Entity\Categorie;
 
 class LayoutController extends AbstractController
 {
@@ -20,17 +20,15 @@ class LayoutController extends AbstractController
       return $this->redirectToRoute('accueil', array('page' => 1));
     }
 
-    public function DernierAnonces($limit)
+    public function Categorie()
     {
-      $listeDerniersAnonces = $this->em->getRepository(Anonce::class)->findBy(
-        array(),                 // Pas de critère
-        array('date' => 'desc'), // On trie par date décroissante
-        $limit,                  // On sélectionne $limit annonces
-        0                        // À partir du premier
+      $listeCategories = $this->em->getRepository(Categorie::class)->findBy(
+        array(),
+        array('nom' => 'asc')                
       );
   
-      return $this->render('layout/listeAnonceMenu.html.twig' ,
-        ['listeAnonces' => $listeDerniersAnonces]
+      return $this->render('layout/categorie.html.twig',
+        ['listeCategories' => $listeCategories]
       );
     }
 }

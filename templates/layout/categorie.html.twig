@@ -1,0 +1,7 @@
+<ul class="nav nav-pills nav-stacked">
+	{% for categorie in listeCategories %}
+		<li>
+			<a href="{{ path('anonce_ategorie', {'id':categorie.id , 'page'  : 1 } )}}"> {{ categorie.nom }} </a>
+		</li>
+	{% endfor %}
+</ul>

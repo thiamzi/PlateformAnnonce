@@ -20,7 +20,6 @@ class CandidatureType extends AbstractType
             ->add('auteur' , TextType::class)
             ->add('email' , EmailType::class)
             ->add('contenu' , TextareaType::class)
-            ->add('save' , SubmitType::class)
         ;
     }
 
